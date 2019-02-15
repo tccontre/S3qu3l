@@ -1,0 +1,74 @@
+----------------------------------------------------------------------------
+                      LOCAL XML SQL-INJECTION TESTER                        
+                                   by:                                      
+                           Teoderick.Contreras                              
+----------------------------------------------------------------------------
+
+
+[+] file path: C:\sequeltool\target\simple.xml
+
+-------------------------------------------------------
+[+] looking for rule: sql_injectio_rule12
+-------------------------------------------------------
+[+] Found possible SQL command!!
+[+] file path     : C:\sequeltool\target\simple.xml
+[+] detection     : sql_injectio_rule12
+[+] line number   : 10
+[+] line of code  :     <name>Strawberry Belgian Wafflesor 2 like 2or 1=1</name>
+
+[+] string matched: or 2 like 2or 1=1
+[+] pattern       : (?i)or\s2\s(?i)like\s2(?i)or\s1\=1
+-------------------------------------------------------
+
+[+] looking for rule: sql_injectio_rule08
+[+] looking for rule: sql_injectio_rule09
+[+] looking for rule: sql_injectio_rule11
+[+] looking for rule: sql_injectio_rule10
+[+] looking for rule: sql_injectio_rule04
+[+] looking for rule: sql_injectio_rule05
+[+] looking for rule: sql_injectio_rule02
+[+] looking for rule: sql_injectio_rule03
+[+] looking for rule: sql_injectio_rule01
+[+] looking for rule: sql_injectio_rule06
+[+] looking for rule: sql_injectio_rule07
+[+] looking for rule: sql_injectio_rule13
+
+
+[+] file path: C:\sequeltool\target\simple2.xml
+
+-------------------------------------------------------
+[+] looking for rule: sql_injectio_rule12
+-------------------------------------------------------
+[+] Found possible SQL command!!
+[+] file path     : C:\sequeltool\target\simple2.xml
+[+] detection     : sql_injectio_rule12
+[+] line number   : 10
+[+] line of code  :     <name>Strawberry Belgian Wafflesor 2 like 2or 1=1</name>
+
+[+] string matched: or 2 like 2or 1=1
+[+] pattern       : (?i)or\s2\s(?i)like\s2(?i)or\s1\=1
+-------------------------------------------------------
+
+[+] looking for rule: sql_injectio_rule08
+[+] looking for rule: sql_injectio_rule09
+[+] looking for rule: sql_injectio_rule11
+[+] looking for rule: sql_injectio_rule10
+-------------------------------------------------------
+[+] Found possible SQL command!!
+[+] file path     : C:\sequeltool\target\simple2.xml
+[+] detection     : sql_injectio_rule10
+[+] line number   : 28
+[+] line of code  :     <name>Homestyle Breakfastor true--</name>
+
+[+] string matched: or true--
+[+] pattern       : ["|'|"\)|'\)]?\s?(?i)or\strue\-\-
+-------------------------------------------------------
+
+[+] looking for rule: sql_injectio_rule04
+[+] looking for rule: sql_injectio_rule05
+[+] looking for rule: sql_injectio_rule02
+[+] looking for rule: sql_injectio_rule03
+[+] looking for rule: sql_injectio_rule01
+[+] looking for rule: sql_injectio_rule06
+[+] looking for rule: sql_injectio_rule07
+[+] looking for rule: sql_injectio_rule13
