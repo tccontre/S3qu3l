@@ -1,4 +1,4 @@
-__author__ = "teoderick contreras"
+__author__ = "tccontre"
 import os
 import re
 import sys
