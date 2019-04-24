@@ -34,7 +34,7 @@ class Sequel:
         self.scan_log("----------------------------------------------------------------------------\n")
         self.scan_log("                      LOCAL XML SQL-INJECTION TESTER                        \n")
         self.scan_log("                                   by:                                      \n")
-        self.scan_log("                           Teoderick.Contreras                              \n")
+        self.scan_log("                                tccontre                              \n")
         self.scan_log("----------------------------------------------------------------------------\n")
         return
 
