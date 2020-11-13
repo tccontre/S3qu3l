@@ -1,159 +1,102 @@
+__author__ = "tccontre"
 import os
-import sys
 import re
+import sys
 import argparse
-import pattern as ptrn
-import Debuglogger as dbgl
-import warnings
-warnings.filterwarnings("ignore", category=DeprecationWarning) 
+import hashlib
+import pattern
 
 
-class Sequence:
+class Sequel:
     def __init__(self):
 
-        self.pat = ptrn.pattern
+        self.pat = pattern.pattern
         self.banner()
         return
 
+    def input_checker(self, target_folder, target_file):
+        self.target_file = target_file
+        self.target_folder = target_folder
+        if self.target_file:
+            self.pattern_scan(self.target_file)
+        else:
+            self.iterate_files()
+        return
+
+    def iterate_files(self):
+        for dirs, subdirs, files in os.walk(self.target_folder):
+            for file in files:
+                file_path = os.path.join(dirs, file)
+                self.pattern_scan(file_path)
+        return
 
     def banner(self):
-        bannr = (r"""   
-
-              ___           ___           ___           ___           ___           ___ 
-             /  /\         /  /\         /  /\         /  /\         /  /\         /  /\
-            /  /::\       /  /::\       /  /::\       /  /:/        /  /::\       /  /:/
-           /__/:/\:\     /  /:/\:\     /__/:/\:\     /  /:/        /  /:/\:\     /  /:/ 
-          _\_ \:\ \:\   /  /::\ \:\    \  \:\ \:\   /  /:/        /  /::\ \:\   /  /:/  
-         /__/\ \:\ \:\ /__/:/\:\ \:\    \  \:\ \:\ /__/:/     /\ /__/:/\:\ \:\ /__/:/   
-         \  \:\ \:\_\/ \  \:\ \:\_\/     \  \:\/:/ \  \:\    /:/ \  \:\ \:\_\/ \  \:\   
-          \  \:\_\:\    \  \:\ \:\        \__\::/   \  \:\  /:/   \  \:\ \:\    \  \:\  
-           \  \:\/:/     \  \:\_\/        /  /:/     \  \:\/:/     \  \:\_\/     \  \:\ 
-            \  \::/       \  \:\         /__/:/       \  \::/       \  \:\        \  \:\
-             \__\/         \__\/         \__\/         \__\/         \__\/         \__\/
-
-                                              by: tccontre
-                                             --------------
-     ------------------------------------------------------------------------------------------------------------
-    
-        """)
-        #print(bannr)
-        dbgl.logger.info(bannr)
+        self.scan_log("----------------------------------------------------------------------------\n")
+        self.scan_log("                      LOCAL XML SQL-INJECTION TESTER                        \n")
+        self.scan_log("                                   by:                                      \n")
+        self.scan_log("                                tccontre                              \n")
+        self.scan_log("----------------------------------------------------------------------------\n")
         return
 
-    def param_checker(self, input_scan):
-
-        """
-        description: insanity checks for input parameter
-
-        parameters:
-            input_scan: file path or folder path you want to scan
-            
-
-        """
-        if input_scan != None and os.path.isfile(input_scan):
-            c = self.file_scan(input_scan)
-        elif input_scan != None and os.path.isdir(input_scan):
-           self.dir_scan(input_scan)
-        else:
-            dbgl.logger.info("[-] Failed: Wrong Input!!")
+    def scan_log(self, w_string):
+        with open("scan.log", 'a') as w:
+            w.write(w_string)
+        print(w_string)
         return
 
+    def scanner(self, list_lines, file_path):
 
-    def read_file(self, file_path):
-        with open(file_path, 'r') as f:
-            dbgl.logger.debug("*************************************************************************************************************************************\n")
-            dbgl.logger.debug("[+] SCAN FILE: {0}".format(file_path))
-            lines = f.readlines()
-        return lines
-
-    def dir_scan(self, input_scan):
-        total_file_det = 0
-        for dirs, subdirs, files in os.walk(input_scan):
-            print(type(files))
-            for file in  files:
-                file_path = os.path.join(dirs, file)
-                found_flag = self.file_scan(file_path)
-                if found_flag:
-                    print("detected: {}".format(file))
-                    total_file_det+=1
-                else:
-                    dbgl.logger.info("[-] FILE         : {:80s} --> NOT DETECTED!!!!".format(file_path))
-            dbgl.logger.info("[+] TOTAL FILES DETECTED: {0}/{1}".format(total_file_det,len(files)))
-                    
-        return
-    
-    def file_scan(self, file_path):
-        lines = self.read_file(file_path)
-        found_flag = self.scanner(lines, file_path)   
-        return found_flag
-
-    def scanner(self, lines, file_path):
-        
-        ptn_cnt = 0
-        for detection_name, pattern_rule in self.pat.items():
-            det_flag = False
+        for key, val in self.pat.items():
             line_num = 1
-            for line in lines:
-                m = re.search(pattern_rule, line)
+            self.scan_log("[+] looking for rule: {0}\n".format(key))
+            for line in list_lines:
+                pat = self.pat[key]
+                m = re.search(pat, line)
                 if m:
-                    dbgl.logger.debug("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n")
-                    dbgl.logger.info("[+] FILE         : {:80s} --> DETECTED AS [{:30s}]".format(file_path, detection_name))
-                    dbgl.logger.debug("[+] DETECTION   : {0}".format(detection_name))
-                    dbgl.logger.debug("[+] LINENUM     : {0}".format(line_num))
-                    dbgl.logger.debug("[+] CODELINE    : {0}".format(line))
-                    dbgl.logger.debug("[+] STR_MATCHED : {0}".format(m.group()))
-                    dbgl.logger.debug("[+] PATTERN     : {0}".format(pattern_rule))
-                    det_flag = True
-                    dbgl.logger.debug("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n")
-                    break
-                else:
-                    line_num +=1
-   
-            if det_flag:
-                ptn_cnt +=1         
-            else:
-                dbgl.logger.debug("[-] STATUS: PATTERN NOT FOUND -> {0}:: {1}".format(detection_name, pattern_rule))
-        dbgl.logger.info("[+] TOTAL PATTERN FOUND: {0}\n".format(ptn_cnt))
-        
-        if ptn_cnt >0:
-            return True
-        else:
-            return False
-        
-                                      
-        
+                    self.scan_log("-------------------------------------------------------\n")
+                    self.scan_log("[+] Found possible SQL command!!\n")
+                    self.scan_log("[+] file path     : {0}\n".format(file_path))
+                    self.scan_log("[+] detection     : {0}\n"
+                                  "[+] line number   : {1}\n"
+                                  "[+] line of code  : {2}\n"
+                                  "[+] string matched: {3}\n"
+                                  "[+] pattern       : {4}\n".format(key, \
+                                                                    line_num, \
+                                                                    line, m.group(), val))
+                    self.scan_log("-------------------------------------------------------\n\n")
 
-def clear_screen():
+                else:
+                    print("[+] PATTERN NOT FOUND - line of code number :{0}\n".format(line_num))
+                line_num += 1
+        return
+
+    def pattern_scan(self, file_path):
+        with open(file_path, 'r') as f:
+            self.scan_log("\n\n[+] file path: {0}\n\n".format(file_path))
+            self.scan_log("-------------------------------------------------------\n")
+            list_lines = f.readlines()
+        self.scanner(list_lines, file_path)
+        return
+
+
+def main():
     if os.name == "nt":
         os.system('cls')
     else:
         os.system('clear')
-    return
-        
-    
 
-def main():
-    # clear the screen
-    clear_screen()
-
-    # instantiate the class
-    sq = Sequence()
-
-    # commandline parameter
+    sq = Sequel()
     parser = argparse.ArgumentParser(description="possible SQL Injection Finder in HTML, XML and etc...")
-    parser.add_argument('-i', '--input_scan', help="the folder or file you want to scan", required=True)
+    parser.add_argument('-d', '--target_folder', help="the folder files you want to scan", required=True)
+    parser.add_argument('-f', '--target_file', help="the file you want to scan", required=False)
 
-
-    # assigned parameters to a variable
-    
     args = vars(parser.parse_args())
-    input_scan = args['input_scan']
+    target_file = args['target_file']
+    target_folder = args['target_folder']
 
-    # sanity check for input parameters
-    sq.param_checker(input_scan)
+    sq.input_checker(target_folder, target_file)
 
     return
-
 
 
 if __name__ == "__main__":
